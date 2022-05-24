@@ -6,13 +6,6 @@ const Home = () => {
     <Screen preset="scrollStack">
       <Text>Home</Text>
       <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
-      <Text>Home</Text>
     </Screen>
   )
 }
