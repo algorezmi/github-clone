@@ -1,4 +1,8 @@
 const string = Object.freeze({
+  title: {
+    homeTitle: "Home",
+    searchTitle: "Search",
+  },
   shared: {
     errorTitle: "Error",
   },

@@ -7,7 +7,7 @@ import { IFixedScreenProps, IScrollScreenProps } from "./screen.props"
 const screen = css`
   flex: 1;
   flex-direction: column;
-  background-color: ${R.color.transparent};
+  background-color: ${R.color.background};
 `
 
 export const StyledFixedScreen = styled(Container)<IFixedScreenProps>`

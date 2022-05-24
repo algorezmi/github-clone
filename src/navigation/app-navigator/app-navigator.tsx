@@ -1,5 +1,10 @@
 import React, { useCallback } from "react"
-import { DefaultTheme, NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+  NavigationContainerRef,
+} from "@react-navigation/native"
 import SplashScreen from "react-native-splash-screen"
 import { RootNavigator } from "@github/navigation/root-navigator"
 import NavigationService from "@github/navigation/navigation-service"
@@ -7,7 +12,7 @@ import { R } from "@github/res"
 import { IAppParamList } from "./app-navigator.types"
 
 const AppTheme = {
-  ...DefaultTheme,
+  ...DarkTheme,
   colors: {
     ...DefaultTheme.colors,
     ...R.color.themeColors,
