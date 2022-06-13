@@ -1,18 +1,13 @@
 import React from "react"
 import { StyleSheet, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
 import { R } from "@github/res"
 import { AppRoute } from "@github/navigation/routes"
 import { Text } from "@github-shared"
 import Item from "./item"
+import { ISearchProps } from "./search.props"
 
-interface IProps {
-  text: String
-}
-
-const Search = (props: IProps) => {
+const Search = (props: ISearchProps) => {
   const isEmptyText = props.text !== ""
-  const navigation = useNavigation()
   if (isEmptyText) {
     return (
       <View>
@@ -20,13 +15,15 @@ const Search = (props: IProps) => {
           type="People"
           text={props.text}
           image={require("../../assets/images/people.png")}
-          onOptionPressed={() => navigation.navigate(AppRoute.People)}
+          onOptionPressed={() => props.navigation.navigate(AppRoute.People, { text: props.text })}
         />
         <Item
           type="Organizations"
           text={props.text}
           image={require("../../assets/images/organization.png")}
-          onOptionPressed={() => navigation.navigate(AppRoute.Organization)}
+          onOptionPressed={() =>
+            props.navigation.navigate(AppRoute.Organization, { text: props.text })
+          }
         />
       </View>
     )

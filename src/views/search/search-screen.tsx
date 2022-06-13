@@ -2,8 +2,9 @@ import React, { useLayoutEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { Input, Screen } from "@github-shared"
 import Search from "./search"
+import { ISearchScreenProps } from "./search-screen.props"
 
-const SearchScreen = () => {
+const SearchScreen = (props: ISearchScreenProps) => {
   const [searchText, setText] = useState("")
   const navigation = useNavigation()
   useLayoutEffect(() => {
@@ -20,7 +21,7 @@ const SearchScreen = () => {
   }, [navigation, searchText])
   return (
     <Screen preset="scrollStack">
-      <Search text={searchText} />
+      <Search text={searchText} navigation={props.navigation} />
     </Screen>
   )
 }

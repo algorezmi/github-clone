@@ -23,7 +23,6 @@ const AppNavigator = () => {
   const onReady = useCallback(() => {
     SplashScreen.hide()
   }, [])
-
   return (
     <NavigationContainer
       ref={(ref: NavigationContainerRef<IAppParamList>) => {

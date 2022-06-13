@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { Dispatch, useCallback, useEffect, useRef, useState } from "react"
 import { AsyncDispatch } from "./hooks.types"
+import useAsyncDispatch from "./useAsyncDispatch"
 
-function useLoadingDispatch(dispatch: AsyncDispatch): [boolean, AsyncDispatch] {
+function useLoadingDispatchFunc(dispatch: AsyncDispatch): [boolean, AsyncDispatch] {
   const [loading, setLoading] = useState(false)
   const isUnmountedRef = useRef(false)
 
@@ -31,7 +32,20 @@ function useLoadingDispatch(dispatch: AsyncDispatch): [boolean, AsyncDispatch] {
     },
     [dispatch],
   )
+
   return [loading, loadingDispatch]
 }
 
+function useLoadingDispatch<T extends unknown>(): [
+  boolean,
+  AsyncDispatch,
+  AsyncDispatch,
+  Dispatch<T>,
+] {
+  const [asyncDispatch, dispatch] = useAsyncDispatch()
+  const [loading, loadingDispatch] = useLoadingDispatchFunc(asyncDispatch)
+  return [loading, loadingDispatch, asyncDispatch, dispatch]
+}
+
 export default useLoadingDispatch
+export { useLoadingDispatchFunc }
