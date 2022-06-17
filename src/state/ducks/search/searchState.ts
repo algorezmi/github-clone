@@ -1,27 +1,31 @@
-import { createAction, createSlice } from "@reduxjs/toolkit"
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { put, takeLatest } from "redux-saga/effects"
-import { ISearchResult } from "@github/services/networking/endpoints/search/search.com"
-import { ExtractActionType, showMessage } from "@github/utils"
+import { IItem, ISearchResult } from "@github/services/networking/endpoints/search/search.com"
+import { showMessage } from "@github/utils"
+import { IResponse, searchUsersEndpoint } from "@github/services"
+import { SagaManager } from "@github/state"
+import { IUserState } from "./search.types"
 
+const initialState: IUserState = {
+  users: [],
+  isLoading: false,
+  error: "",
+}
 const searchUsersAction = createAction("search/doSearch", (text: string) => ({
   payload: { text },
 }))
 const searchSlice = createSlice({
   name: "search",
-  initialState: {
-    users: [],
-    isLoading: false,
-    error: "",
-  },
+  initialState,
   reducers: {
     getUsers: (state) => {
       state.isLoading = true
     },
-    getUsersSuccess: (state, action) => {
+    getUsersSuccess: (state, action: PayloadAction<IItem[]>) => {
       state.users = action.payload
       state.isLoading = false
     },
-    getUsersFailiuer: (state, action) => {
+    getUsersFailiuer: (state, action: PayloadAction<string>) => {
       state.users = []
       state.error = action.payload
       state.isLoading = false
@@ -37,50 +41,59 @@ const searchSlice = createSlice({
 //   return response
 // }
 
-async function getUsersInfo(text: string): Promise<ISearchResult> {
-  try {
-    const response = await fetch("https://api.github.com/search/user?q=" + text, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-    return response.json()
-  } catch (error) {
-    return {} as ISearchResult
+// async function getUsersInfo(text: string): Promise<ISearchResult> {
+//   try {
+//     const response = await axios.request<ISearchResult>({
+//       url: "https://api.github.com/search/users?q=" + text,
+//       method: "get",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//     })
+//     showMessage(JSON.stringify(response))
+//     return response.data
+//   } catch (error) {
+//     showMessage(error + "")
+//     return {} as ISearchResult
+//   }
+// }
+
+function* postSearchRequest(response: IResponse<Required<ISearchResult>>) {
+  showMessage("here1")
+  if (response.ok) {
+    // yield call(getUsers)
+    showMessage("here")
+    showMessage(JSON.stringify(response.data))
+    yield put(getUsersSuccess(response.data.items))
+  } else {
+    showMessage("here fail")
+    yield put(getUsersFailiuer(response.error + ""))
   }
+  return response
 }
 
-export function* doSearch({ payload: { text } }: ExtractActionType<typeof searchUsersAction>) {
-  showMessage("here")
-  try {
-    yield put(getUsers())
-    yield getUsersInfo(text)
-      .then((response) => {
-        return put(getUsersSuccess({ users: response }))
-      })
-      .catch((error) => {
-        return put(getUsersFailiuer({ error }))
-      })
-  } catch (error) {
-    showMessage("here fail")
-    yield put(getUsersFailiuer(false))
-  }
-}
+// function* prepareSearchRequest({
+//   payload: { text },
+// }: ExtractActionType<typeof searchUsersAction>): Generator<any, { text: string }, any> {
+//   return {
+//     text,
+//   }
+// }
 // function* doSearch(){
 //   const users = yield await call(()=>fetch('));
 //   const resu = yield users.json()
 // }
-// const doSearch = SagaManager.apiGenerator({
-//   endpoint: searchUsersEndpoint,
-// })
+const doSearchRequest = SagaManager.apiGenerator({
+  endpoint: searchUsersEndpoint,
+  post: postSearchRequest,
+})
 // export const searchReducerName = searchSlice.name
 
 // export { searchUsersAction}
 
 export function* searchSubscription() {
-  yield takeLatest(searchUsersAction.type, doSearch)
+  yield takeLatest(searchUsersAction.type, doSearchRequest)
 }
 
 export const { getUsers, getUsersSuccess, getUsersFailiuer } = searchSlice.actions

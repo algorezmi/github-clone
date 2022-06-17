@@ -1,5 +1,6 @@
 import { ResponseType as APIResponseType } from "axios"
 import { SnakeKeysToCamelCase } from "@github/utils"
+import { IPayload, IServerPayload } from "@github/services"
 
 export enum HttpMethod {
   Get = "GET",
@@ -82,3 +83,23 @@ export type IEmptyDataEndpoint<TServerResponse, TResponse = DefaultResponseType<
  * Endpoint without body data, path params and response
  */
 export type IEmptyEndpoint = IEmptyDataEndpoint<UndefinedServerResponseType>
+
+export type IDataParamsAndPayloadEndpoint<
+  TServerData,
+  TServerResponse,
+  TResponse = DefaultResponseType<TServerResponse>,
+  TPathParams = DefaultPathParamsType,
+  TData = DefaultEndpointData<TServerData>,
+> = IEndpoint<TServerData, IServerPayload<TServerResponse>, TPathParams, TData, IPayload<TResponse>>
+
+export type IParamsPayloadEndpoint<
+  TServerResponse,
+  TResponse = DefaultResponseType<TServerResponse>,
+  TPathParams = DefaultPathParamsType,
+> = IDataParamsAndPayloadEndpoint<
+  UndefinedDataType,
+  TServerResponse,
+  TResponse,
+  TPathParams,
+  UndefinedDataType
+>

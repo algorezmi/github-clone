@@ -1,10 +1,12 @@
 import {
   HttpMethod,
-  IEmptyDataEndpoint,
+  IParamsPayloadEndpoint,
 } from "@github/services/networking/endpoints/endpoint.types"
 import { ISearchResult } from "./search.com"
 
-export const searchUsersEndpoint: IEmptyDataEndpoint<ISearchResult> = {
-  path: "search/user?q=ss",
+export const searchUsersEndpoint = (
+  text: string,
+): IParamsPayloadEndpoint<ISearchResult, { text: string }, Required<ISearchResult>> => ({
+  path: "search/users?q=" + text,
   method: HttpMethod.Get,
-} as const
+})
