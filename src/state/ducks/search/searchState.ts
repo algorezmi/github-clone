@@ -1,7 +1,7 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { put, takeLatest } from "redux-saga/effects"
-import { IItem, ISearchResult } from "@github/services/networking/endpoints/search/search.com"
-import { showMessage } from "@github/utils"
+import { IItem } from "@github/services/networking/endpoints/search/search.com"
+import { ExtractActionType, showMessage } from "@github/utils"
 import { IResponse, searchUsersEndpoint } from "@github/services"
 import { SagaManager } from "@github/state"
 import { IUserState } from "./search.types"
@@ -59,13 +59,13 @@ const searchSlice = createSlice({
 //   }
 // }
 
-function* postSearchRequest(response: IResponse<Required<ISearchResult>>) {
+function* postSearchRequest(response: IResponse<{}>) {
   showMessage("here1")
   if (response.ok) {
     // yield call(getUsers)
     showMessage("here")
     showMessage(JSON.stringify(response.data))
-    yield put(getUsersSuccess(response.data.items))
+    yield put(getUsersSuccess([]))
   } else {
     showMessage("here fail")
     yield put(getUsersFailiuer(response.error + ""))
@@ -73,19 +73,20 @@ function* postSearchRequest(response: IResponse<Required<ISearchResult>>) {
   return response
 }
 
-// function* prepareSearchRequest({
-//   payload: { text },
-// }: ExtractActionType<typeof searchUsersAction>): Generator<any, { text: string }, any> {
-//   return {
-//     text,
-//   }
-// }
+// const dataMapper = ({text}: {text:string}) =>{  return {"q": text}}
+
+function* prepareSearchRequest({ payload: { text } }: ExtractActionType<typeof searchUsersAction>) {
+  return {
+    pathParams: { q: text },
+  }
+}
 // function* doSearch(){
 //   const users = yield await call(()=>fetch('));
 //   const resu = yield users.json()
 // }
 const doSearchRequest = SagaManager.apiGenerator({
   endpoint: searchUsersEndpoint,
+  prepare: prepareSearchRequest,
   post: postSearchRequest,
 })
 // export const searchReducerName = searchSlice.name

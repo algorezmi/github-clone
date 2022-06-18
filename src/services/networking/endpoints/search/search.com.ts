@@ -29,3 +29,7 @@ export interface ISearchResult {
 export interface ISearchRequest {
   searchText: string
 }
+
+export interface ISearchPayload {
+  q: string
+}
