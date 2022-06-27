@@ -1,1 +1,1 @@
-export { default as PeopleResults } from "./people-results"
+export { default as PeopleResults } from "./people"

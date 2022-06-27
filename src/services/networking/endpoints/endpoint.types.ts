@@ -1,105 +1,14 @@
-import { ResponseType as APIResponseType } from "axios"
-import { SnakeKeysToCamelCase } from "@github/utils"
-import { IPayload, IServerPayload } from "@github/services"
+import { IPayload } from "@github/services/networking/api-types"
 
-export enum HttpMethod {
-  Get = "GET",
-  Post = "POST",
-  Put = "PUT",
-  Delete = "DELETE",
-}
+export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE"
 
-export type IMapper<D, T> = (data: D) => T
+export type IMapper<T> = (data: IPayload | undefined) => T
 
-type DefaultResponseType<T> = SnakeKeysToCamelCase<T>
-
-export type UndefinedDataType = undefined
-export type UndefinedPathParamsType = undefined[]
-export type UndefinedServerResponseType = undefined
-
-export type DefaultPathParamsType = [number]
-
-export type DefaultEndpointData<T> = SnakeKeysToCamelCase<T>
-
-/**
- * General Endpoint
- */
-export interface IEndpoint<TServerData, TServerResponse, TPathParams, TData, TResponse> {
+export interface IEndpoint<TData, TResponse> {
   path: string
-  method: HttpMethod
-  pathParams?: TPathParams // Mutable additional url path parameters (eg. document ID) will be added at the end of the endpoint path.
+  method: HTTP_METHOD
+  pathParams?: string[] // Mutable additional url path parameters (eg. document ID) will be added at the end of the endpoint path.
   data?: TData
-  mapper?: IMapper<TServerResponse, TResponse>
-  dataMapper?: IMapper<TData, TServerData>
+  mapper?: IMapper<TResponse>
   response?: TResponse
-  responseType?: APIResponseType
 }
-
-/**
- * Endpoint with body data and path params
- */
-export type IDataParamsEndpoint<
-  TServerData,
-  TServerResponse,
-  TPathParams = DefaultPathParamsType,
-  TData = DefaultEndpointData<TServerData>,
-  TResponse = DefaultResponseType<TServerResponse>,
-> = IEndpoint<TServerData, TServerResponse, TPathParams, TData, TResponse>
-
-/**
- * Endpoint with path params only
- */
-export type IParamsEndpoint<
-  TServerResponse,
-  TPathParams = DefaultPathParamsType,
-  TResponse = DefaultResponseType<TServerResponse>,
-> = IEndpoint<UndefinedDataType, TServerResponse, TPathParams, UndefinedDataType, TResponse>
-
-/**
- * Endpoint with body data only
- */
-export type IDataEndpoint<
-  TServerData,
-  TServerResponse,
-  TData = DefaultEndpointData<TServerData>,
-  TResponse = DefaultResponseType<TServerResponse>,
-> = IEndpoint<TServerData, TServerResponse, UndefinedPathParamsType, TData, TResponse>
-
-/**
- * Endpoint with path params only and its ok response is empty
- */
-export type IParamsEmptyResponseEndpoint<TPathParams = DefaultPathParamsType> = IParamsEndpoint<
-  UndefinedDataType,
-  TPathParams
->
-
-/**
- * Endpoint without body data and path params
- */
-export type IEmptyDataEndpoint<TServerResponse, TResponse = DefaultResponseType<TServerResponse>> =
-  IParamsEndpoint<TServerResponse, UndefinedPathParamsType, TResponse>
-
-/**
- * Endpoint without body data, path params and response
- */
-export type IEmptyEndpoint = IEmptyDataEndpoint<UndefinedServerResponseType>
-
-export type IDataParamsAndPayloadEndpoint<
-  TServerData,
-  TServerResponse,
-  TResponse = DefaultResponseType<TServerResponse>,
-  TPathParams = DefaultPathParamsType,
-  TData = DefaultEndpointData<TServerData>,
-> = IEndpoint<TServerData, IServerPayload<TServerResponse>, TPathParams, TData, IPayload<TResponse>>
-
-export type IParamsPayloadEndpoint<
-  TServerResponse,
-  TResponse = DefaultResponseType<TServerResponse>,
-  TPathParams = DefaultPathParamsType,
-> = IDataParamsAndPayloadEndpoint<
-  UndefinedDataType,
-  TServerResponse,
-  TResponse,
-  TPathParams,
-  UndefinedDataType
->

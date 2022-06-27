@@ -1,19 +1,18 @@
-import type { CancelToken, CancelTokenSource } from "axios"
 import { ApiResponse } from "apisauce"
-import { SnakeKeysToCamelCase } from "@github/utils"
-import { IEndpoint, UndefinedDataType, UndefinedPathParamsType } from "./endpoints"
+import { IObject } from "@github/utils"
 
-export interface IServerPayload<T> {
-  data: T
-}
+export type IPayload = IObject
 
-export type IPayload<T> = SnakeKeysToCamelCase<IServerPayload<T>>
+export type IApiOkResponse = IObject
 
 export interface IApiErrorResponse {
   message: string
+  messages: [string]
+  errors: [string]
+  heading: string
 }
 
-export type IApiResponse<TOkResponse> = ApiResponse<TOkResponse, IApiErrorResponse>
+export type IApiResponse = ApiResponse<IApiOkResponse, IApiErrorResponse>
 
 export enum ResponseProblem {
   Timeout = "timeout", // Times up.
@@ -26,7 +25,6 @@ export enum ResponseProblem {
   Unknown = "unknown", // Something truly unexpected happened. Most likely can try again. This is a catch all.
   BadData = "bad-data", // The data we received is not in the expected format.
   Cancelled = "cancelled", // Request is cancelled
-  Internal = "internal", // For app exceptions
 }
 
 interface IApiProblem {
@@ -39,26 +37,18 @@ export type IGeneralProblem = IApiProblem | { problem: ResponseProblem.Cancelled
 
 export interface IOkResponse<T> {
   ok: true
-  data: T
+  data?: T
+  statusCode?: number
 }
 
 export type IErrorResponse = IGeneralProblem & {
   ok: false
-  code?: number
+  errors?: [string]
+  error?: string
   serverMessage?: string
-  error: string
+  statusCode?: number
+  errorHeading?: string
+  errorMessage?: string
 }
 
 export type IResponse<T> = IOkResponse<T> | IErrorResponse
-
-export type TokenType = string | null
-
-export type { CancelToken, CancelTokenSource }
-
-export type IRequestData<TServerData, TServerResponse, TPathParams, TData, TResponse> = Omit<
-  IEndpoint<TServerData, TServerResponse, TPathParams, TData, TResponse>,
-  "path" | "method" | "data"
-> & {
-  cancelToken?: CancelToken
-} & (TData extends UndefinedDataType ? {} : TData) &
-  (TPathParams extends UndefinedPathParamsType ? {} : { pathParams: TPathParams })

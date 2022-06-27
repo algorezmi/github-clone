@@ -1,10 +1,10 @@
 import React from "react"
-import { StyleSheet, View } from "react-native"
-import { R } from "@github/res"
+import { View } from "react-native"
 import { AppRoute } from "@github/navigation/routes"
 import { Text } from "@github-shared"
-import Item from "./item"
+import { Item } from "@github/views/search-suggestion-line"
 import { ISearchProps } from "./search.props"
+import { styles } from "./search.style"
 
 const Search = (props: ISearchProps) => {
   const isEmptyText = props.text !== ""
@@ -42,22 +42,3 @@ const Search = (props: ISearchProps) => {
 }
 
 export default Search
-
-const styles = StyleSheet.create({
-  empty_container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    flexGrow: 1,
-    alignItems: "center",
-    backgroundColor: R.color.background,
-  },
-  text: {
-    flex: 1,
-    width: "100%",
-    flexGrow: 1,
-    alignItems: "center",
-    backgroundColor: R.color.background,
-    color: R.color.text,
-  },
-})

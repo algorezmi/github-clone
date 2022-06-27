@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { Input, Screen } from "@github-shared"
-import Search from "./search"
-import { ISearchScreenProps } from "./search-screen.props"
+import { Search } from "@github/views/search"
+import { ISearchContainerProps } from "./search-container.props"
 
-const SearchScreen = (props: ISearchScreenProps) => {
+const SearchContainer = (props: ISearchContainerProps) => {
   const [searchText, setText] = useState("")
   const navigation = useNavigation()
   useLayoutEffect(() => {
@@ -26,4 +26,4 @@ const SearchScreen = (props: ISearchScreenProps) => {
   )
 }
 
-export default SearchScreen
+export default SearchContainer

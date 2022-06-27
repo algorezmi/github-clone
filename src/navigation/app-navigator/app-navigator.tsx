@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect } from "react"
 import {
   DarkTheme,
   DefaultTheme,
@@ -9,6 +9,8 @@ import SplashScreen from "react-native-splash-screen"
 import { RootNavigator } from "@github/navigation/root-navigator"
 import NavigationService from "@github/navigation/navigation-service"
 import { R } from "@github/res"
+import { API } from "@github/services"
+import { ENV } from "@github/config"
 import { IAppParamList } from "./app-navigator.types"
 
 const AppTheme = {
@@ -20,6 +22,9 @@ const AppTheme = {
 }
 
 const AppNavigator = () => {
+  useEffect(() => {
+    API.setup(ENV.baseURL)
+  })
   const onReady = useCallback(() => {
     SplashScreen.hide()
   }, [])

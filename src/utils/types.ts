@@ -8,7 +8,7 @@ export interface IEmpty {
 }
 
 // FIXME: Is there a better way to define this?
-export type IObject<T = unknown> = Record<string, T>
+export type IObject<T = undefined> = Record<string, T>
 
 export type ChildrenProp = React.ReactNode
 

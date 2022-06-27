@@ -1,5 +1,4 @@
 import { ENV } from "@github/config"
-import { ApiConstants } from "./api.constants"
 
 /**
  * The options used to configure the API.
@@ -21,5 +20,5 @@ export interface IApiConfig {
  */
 export const DEFAULT_API_CONFIG: IApiConfig = {
   url: ENV.baseURL,
-  minimumTimeout: ApiConstants.requestTimeout,
+  minimumTimeout: 1000,
 }

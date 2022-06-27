@@ -4,10 +4,10 @@ import { TouchableOpacity } from "react-native-gesture-handler"
 import { AppRoute } from "@github/navigation/routes"
 import { Image } from "@github-shared"
 import { HomeScreen } from "@github/views/home"
-import { SearchScreen } from "@github/views/search"
 import { R } from "@github/res"
 import { PeopleResults } from "@github/views/people"
 import { OrganizationResults } from "@github/views/organization"
+import SearchContainer from "@github/views/search-container/search-container"
 import { IRootParamList } from "./root-navigator.types"
 
 const RootStack = createStackNavigator<IRootParamList>()
@@ -32,7 +32,7 @@ const RootNavigator = () => {
             headerTintColor: R.color.text,
           })}
         />
-        <RootStack.Screen name={AppRoute.Search} component={SearchScreen} />
+        <RootStack.Screen name={AppRoute.Search} component={SearchContainer} />
         <RootStack.Screen
           name={AppRoute.People}
           component={PeopleResults}
