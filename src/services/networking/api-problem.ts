@@ -12,24 +12,24 @@ export function getGeneralApiProblem<T, U>(response: ApiResponse<T, U>): IGenera
     case "CONNECTION_ERROR":
     case "NETWORK_ERROR":
       return {
-        problem: ResponseProblem.cannotConnect,
+        problem: ResponseProblem.CannotConnect,
         message: R.string.errors.networkError,
         temporary: true,
       }
     case "TIMEOUT_ERROR":
       return {
-        problem: ResponseProblem.timeout,
+        problem: ResponseProblem.Timeout,
         message: R.string.errors.requestTimeout,
         temporary: true,
       }
     case "SERVER_ERROR":
       return {
-        problem: ResponseProblem.server,
+        problem: ResponseProblem.Server,
         message: R.string.errors.serverError,
       }
     case "UNKNOWN_ERROR":
       return {
-        problem: ResponseProblem.unknown,
+        problem: ResponseProblem.Unknown,
         message: R.string.errors.generalError,
         temporary: true,
       }
@@ -37,18 +37,18 @@ export function getGeneralApiProblem<T, U>(response: ApiResponse<T, U>): IGenera
       switch (response.status) {
         case 401:
           return {
-            problem: ResponseProblem.unauthorized,
+            problem: ResponseProblem.Unauthorized,
             message: R.string.errors.unauthorizedError,
           }
         case 403:
-          return { problem: ResponseProblem.forbidden, message: R.string.errors.forbiddenError }
+          return { problem: ResponseProblem.Forbidden, message: R.string.errors.forbiddenError }
         case 404:
-          return { problem: ResponseProblem.notFound, message: R.string.errors.resourceNotFound }
+          return { problem: ResponseProblem.NotFound, message: R.string.errors.resourceNotFound }
         default:
-          return { problem: ResponseProblem.rejected, message: R.string.errors.rejectError }
+          return { problem: ResponseProblem.Rejected, message: R.string.errors.rejectError }
       }
     case "CANCEL_ERROR":
     case null:
-      return { problem: ResponseProblem.cancelled }
+      return { problem: ResponseProblem.Cancelled }
   }
 }

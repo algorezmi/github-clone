@@ -9,17 +9,12 @@ import { IItem, ISearchResult } from "@github/services"
 import { IOrganizationProps } from "./organization.props"
 import CardItem from "./card_item"
 
-var shown = false
-
 const FlatListItemSeparator = () => {
   return <View style={styles.seperator} />
 }
-const renderItemComponent = (item: IItem) => {
-  if (!shown) {
-    console.log("\n\n\n\n\n\n" + JSON.stringify(item))
-    shown = true
-  }
-  return <CardItem image={item.avatar_url} name={item.login} />
+
+const renderItemComponent = (item: { item: IItem }) => {
+  return <CardItem image={item.item.avatar_url} name={item.item.login} />
 }
 
 const Organization = (props: IOrganizationProps) => {
@@ -35,7 +30,6 @@ const Organization = (props: IOrganizationProps) => {
         text,
         (response: ISearchResult) => {
           setResults(response.items)
-          showMessage(response.items[0].login.toString())
           setLoading(false)
           setLoaded(true)
         },
@@ -58,7 +52,7 @@ const Organization = (props: IOrganizationProps) => {
         <View>
           <Text>Loading</Text>
         </View>
-      ) : (
+      ) : (data.length && data[0].login !== null && data[0].login !== "") > 0 ? (
         <FlatList
           style={styles.list}
           data={data}
@@ -69,6 +63,8 @@ const Organization = (props: IOrganizationProps) => {
           removeClippedSubviews={true}
           refreshing
         />
+      ) : (
+        <Text style={styles.emptyListStyle}>No Data Found</Text>
       )}
     </View>
   )
@@ -110,7 +106,7 @@ const styles = StyleSheet.create({
   outer_container: {
     flex: 1,
     overflow: "hidden",
-    backgroundColor: "#000",
+    backgroundColor: R.color.background,
     alignItems: "center",
     justifyContent: "flex-start",
   },
@@ -118,18 +114,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     overflow: "hidden",
+    backgroundColor: R.color.transparent,
   },
   cardcontainer: {
     overflow: "hidden",
     flexGrow: 1,
-    backgroundColor: "white",
     alignItems: "center",
     width: Dimensions.get("window").width,
     borderWidth: 0,
+    backgroundColor: R.color.transparent,
   },
   seperator: {
     height: 1,
     width: "100%",
     backgroundColor: "#fff",
+  },
+  emptyListStyle: {
+    padding: 10,
+    fontSize: 18,
+    textAlign: "center",
   },
 })

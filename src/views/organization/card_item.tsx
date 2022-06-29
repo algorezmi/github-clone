@@ -3,9 +3,11 @@ import { Dimensions, Image, StyleSheet, View } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { showMessage } from "@github/utils"
 import { Text } from "@github-shared"
+import { R } from "@github/res"
 import { ICardItemProps } from "./card-item.props"
 
 const CardItem = (props: ICardItemProps) => {
+  // console.log("image :"+props.name)
   return (
     <TouchableOpacity style={styles.cardview} onPress={() => showMessage(props.image)}>
       <View style={styles.imagecontainer}>
@@ -25,47 +27,45 @@ const CardItem = (props: ICardItemProps) => {
 }
 
 export default CardItem
-// <View style={styles.cardtext}>
-//         <Text style={styles.textdate}>{this.props.date}</Text>
-//         <Text style={styles.texthour}>{this.props.hour}</Text>
-//       </View>
 const styles = StyleSheet.create({
   cardview: {
     flex: 1,
+    flexDirection: "row",
     justifyContent: "flex-start",
-    backgroundColor: "white",
+    backgroundColor: R.color.background,
     elevation: 3,
-    maxHeight: 200,
     width: Dimensions.get("window").width - 20,
+    maxHeight: 100,
+    minHeight: 50,
+    flexWrap: "wrap",
     margin: 1,
     marginTop: 10,
     borderRadius: 4,
   },
   imagecontainer: {
-    flex: 7,
-    height: 140,
+    flex: 1,
+    height: 50,
     borderRadius: 4,
   },
   cardimage: {
     flex: 1,
     opacity: 0.8,
-    height: 140,
-    width: 140,
+    height: 50,
+    width: 50,
     backgroundColor: "#000",
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
   },
   cardinfo: {
-    flex: 2,
-    flexDirection: "row",
+    flex: 3,
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
+    alignItems: "flex-start",
+    padding: 2,
   },
   cardtitle: {
     flex: 1,
     fontSize: 16,
     fontWeight: "bold",
+    color: R.color.text,
   },
   cardtext: {
     flex: 1,

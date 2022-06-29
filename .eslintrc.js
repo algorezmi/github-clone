@@ -45,7 +45,7 @@ module.exports = {
         "ts-ignore": "allow-with-description",
       },
     ],
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "off",
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": "error",
   },

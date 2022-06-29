@@ -7,8 +7,8 @@ export type IApiOkResponse = IObject
 
 export interface IApiErrorResponse {
   message: string
-  messages: [string]
-  errors: [string]
+  messages: any
+  errors: any
   heading: string
 }
 
