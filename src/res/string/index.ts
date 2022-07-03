@@ -6,6 +6,8 @@ const string = Object.freeze({
     organizationTitle: "Organization",
   },
   shared: {
+    searchDescription: "ErrorSearch all of github for People and Organizations",
+    searchTitle: "Find your stuff",
     errorTitle: "Error",
   },
   errors: {

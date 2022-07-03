@@ -3,6 +3,7 @@ import { View } from "react-native"
 import { AppRoute } from "@github/navigation/routes"
 import { Text } from "@github-shared"
 import { Item } from "@github/views/search-suggestion-line"
+import { R } from "@github/res"
 import { ISearchProps } from "./search.props"
 import { styles } from "./search.style"
 
@@ -10,7 +11,7 @@ const Search = (props: ISearchProps) => {
   const isEmptyText = props.text !== ""
   if (isEmptyText) {
     return (
-      <View>
+      <View style={styles.empty_container}>
         <Item
           type="People"
           text={props.text}
@@ -30,12 +31,10 @@ const Search = (props: ISearchProps) => {
   } else {
     return (
       <View style={styles.empty_container}>
-        <Text style={styles.text} preset="primaryLarger">
-          Find your stuff
+        <Text preset="primaryLarger" style={styles.large_text}>
+          {R.string.shared.searchTitle}
         </Text>
-        <Text style={styles.text} preset="secondary">
-          Search all of github
-        </Text>
+        <Text style={styles.medium_text}>{R.string.shared.searchDescription}</Text>
       </View>
     )
   }

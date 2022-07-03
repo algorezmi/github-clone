@@ -19,7 +19,7 @@ export default class AppColor {
 
   public divider = palette.grey.base
 
-  public statusBar = palette.black.base
+  public statusBar = palette.black.medium
 
   public refreshControlBackground = palette.blue.base
   public refreshControl = palette.white.base

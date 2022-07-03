@@ -1,7 +1,9 @@
 import React, { useLayoutEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
-import { Input, Screen } from "@github-shared"
+import { View } from "react-native"
+import { Input } from "@github-shared"
 import { Search } from "@github/views/search"
+import { R } from "@github/res"
 import { ISearchContainerProps } from "./search-container.props"
 
 const SearchContainer = (props: ISearchContainerProps) => {
@@ -20,9 +22,9 @@ const SearchContainer = (props: ISearchContainerProps) => {
     })
   }, [navigation, searchText])
   return (
-    <Screen preset="scrollStack">
+    <View style={{ flex: 1, backgroundColor: R.color.background }}>
       <Search text={searchText} navigation={props.navigation} />
-    </Screen>
+    </View>
   )
 }
 

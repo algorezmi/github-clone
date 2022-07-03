@@ -1,29 +1,29 @@
 import { StyleSheet } from "react-native"
+import { R } from "@github/res"
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    height: 40,
-    padding: 0,
+    height: "auto",
     marginLeft: 0,
-    flex: 1,
     paddingRight: 0,
-    backgroundColor: "#fff",
+    backgroundColor: R.color.statusBar,
   },
   button: {
     width: "100%",
-    height: 40,
+    height: "auto",
     padding: 5,
     marginLeft: 0,
-    flex: 1,
     paddingRight: 0,
+    paddingTop: 10,
+    marginBottom: 0,
     alignSelf: "stretch",
     alignItems: "stretch",
     alignContent: "stretch",
     flexDirection: "row",
     justifyContent: "flex-start",
-    backgroundColor: "black",
+    backgroundColor: R.color.statusBar,
   },
   image: {
     width: 30,
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     width: "100%",
-    height: "100%",
+    height: "auto",
     alignSelf: "center",
     marginStart: 2,
     textAlignVertical: "center",
