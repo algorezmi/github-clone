@@ -34,8 +34,9 @@ const configureAppStore = () => {
   sagaMiddleware.run(rootSaga)
   return appStore
 }
-
 const store = configureAppStore()
+export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
 const persistor = persistStore(store)
 
 export { store, persistor }

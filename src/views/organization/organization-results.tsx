@@ -1,137 +1,61 @@
-import React, { useCallback, useState } from "react"
-import { Dimensions, FlatList, StyleSheet, View } from "react-native"
-import { useDispatch } from "react-redux"
-import { Button, Text } from "@github-shared"
+import React, { useCallback } from "react"
+import { View } from "react-native"
 import { R } from "@github/res"
 import { showMessage } from "@github/utils"
-import { searchUsersAction } from "@github/state"
-import { IItem, ISearchResult } from "@github/services"
+import { searchUsersAction, resetUsersState } from "@github/state"
+import { IItem } from "@github/services"
+import { useAppDispatch, useAppSelector } from "@github/hooks/hooks.types"
+import { DefaultHeader } from "@github-shared/default-header"
+import { ItemList } from "@github/views/ItemList"
+import { CardItem } from "@github/views/cardItem"
 import { IOrganizationProps } from "./organization.props"
-import CardItem from "./card_item"
-
-const FlatListItemSeparator = () => {
-  return <View style={styles.seperator} />
-}
+import { styles } from "./organization.style"
 
 const renderItemComponent = (item: { item: IItem }) => {
   return <CardItem image={item.item.avatar_url} name={item.item.login} />
 }
 
 const Organization = (props: IOrganizationProps) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { text } = props.route.params
-  const [loading, setLoading] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-  const [data, setResults] = useState<IItem[]>([])
+  const page = useAppSelector((state) => state.search.page)
   const getInfo = useCallback(() => {
-    setLoading(true)
     dispatch(
       searchUsersAction(
         text,
-        (response: ISearchResult) => {
-          setResults(response.items)
-          setLoading(false)
-          setLoaded(true)
+        page,
+        () => {
+          return null
         },
         () => {
-          showMessage("failed")
-          setLoading(false)
+          showMessage(R.string.errors.generalError)
+          return null
         },
       ),
     )
-  }, [dispatch, text, setResults])
+  }, [page, text, dispatch])
+  const cleareState = useCallback(() => {
+    dispatch(resetUsersState())
+    {
+      props.navigation.goBack()
+    }
+  }, [dispatch, props.navigation])
 
   return (
-    <View style={styles.outer_container}>
-      {loaded ? null : (
-        <Button onPress={getInfo}>
-          <Text>press</Text>
-        </Button>
-      )}
-      {loading ? (
-        <View>
-          <Text>Loading</Text>
-        </View>
-      ) : (data.length && data[0].login !== null && data[0].login !== "") > 0 ? (
-        <FlatList
-          style={styles.list}
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={(item) => renderItemComponent(item)}
-          contentContainerStyle={styles.cardcontainer}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          removeClippedSubviews={true}
-          refreshing
-        />
-      ) : (
-        <Text style={styles.emptyListStyle}>No Data Found</Text>
-      )}
+    <View style={styles.empty_container}>
+      <DefaultHeader
+        title={R.string.title.organizationTitle}
+        goBack={() => {
+          cleareState()
+        }}
+      />
+      <ItemList
+        renderItem={(item) => renderItemComponent(item)}
+        callBack={getInfo}
+        preset="organizations"
+        directionPreset="verical"
+      />
     </View>
   )
 }
-
 export default Organization
-
-const styles = StyleSheet.create({
-  empty_container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    flexGrow: 1,
-    backgroundColor: R.color.background,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    padding: 2,
-  },
-  text: {
-    width: "80%",
-    height: 20,
-    alignSelf: "center",
-    marginStart: 2,
-    textAlignVertical: "center",
-    backgroundColor: "#fff",
-  },
-  container: {
-    flexDirection: "row",
-    width: "100%",
-    height: 100,
-    padding: 0,
-    marginLeft: 0,
-    flex: 1,
-    paddingRight: 0,
-    backgroundColor: R.color.transparent,
-  },
-  outer_container: {
-    flex: 1,
-    overflow: "hidden",
-    backgroundColor: R.color.background,
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  list: {
-    flex: 1,
-    flexGrow: 1,
-    overflow: "hidden",
-    backgroundColor: R.color.transparent,
-  },
-  cardcontainer: {
-    overflow: "hidden",
-    flexGrow: 1,
-    alignItems: "center",
-    width: Dimensions.get("window").width,
-    borderWidth: 0,
-    backgroundColor: R.color.transparent,
-  },
-  seperator: {
-    height: 1,
-    width: "100%",
-    backgroundColor: "#fff",
-  },
-  emptyListStyle: {
-    padding: 10,
-    fontSize: 18,
-    textAlign: "center",
-  },
-})
