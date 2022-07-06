@@ -34,7 +34,7 @@ const searchSlice = createSlice({
       return { ...state, isLoading: true }
     },
     updateCanLoadMore: (state, action: PayloadAction<number>) => {
-      if (action.payload > state.users.length) {
+      if (action.payload >= state.users.length) {
         return { ...state, canLoadMore: true, page: state.page + 1, isLoading: false }
       } else {
         return { ...state, canLoadMore: false }
