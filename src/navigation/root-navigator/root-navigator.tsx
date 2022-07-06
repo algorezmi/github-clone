@@ -17,6 +17,7 @@ const RootNavigator = () => {
     <RootStack.Navigator initialRouteName={AppRoute.Home} screenOptions={{ headerShown: true }}>
       <RootStack.Group
         screenOptions={{
+          headerTitleStyle: { width: "auto" },
           headerStyle: { backgroundColor: R.color.statusBar, borderColor: R.color.text },
         }}>
         <RootStack.Screen
@@ -32,7 +33,13 @@ const RootNavigator = () => {
             headerTintColor: R.color.text,
           })}
         />
-        <RootStack.Screen name={AppRoute.Search} component={SearchContainer} />
+        <RootStack.Screen
+          options={({}) => ({
+            headerLeftContainerStyle: { width: "6%" },
+          })}
+          name={AppRoute.Search}
+          component={SearchContainer}
+        />
         <RootStack.Screen
           name={AppRoute.People}
           component={PeopleResults}
