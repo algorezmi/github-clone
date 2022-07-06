@@ -23,7 +23,7 @@ const Organization = (props: IResultsListProps) => {
       searchUsersAction(
         text,
         page.current,
-        "Organization",
+        props.type,
         () => {
           page.current = page.current + 1
           return null
@@ -34,7 +34,7 @@ const Organization = (props: IResultsListProps) => {
         },
       ),
     )
-  }, [text, dispatch])
+  }, [text, dispatch, props.type])
 
   return (
     <View style={styles.empty_container}>
