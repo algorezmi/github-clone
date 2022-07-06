@@ -4,7 +4,7 @@ import { IItem, ISearchResult } from "@github/services/networking/endpoints/sear
 import { ExtractActionType } from "@github/utils"
 import { API, IResponse, ResponseProblem, searchUsersEndpoint } from "@github/services"
 import { errify } from "@github/state/ducks/utils"
-import { IUserState } from "./search.types"
+import { IUserState, SearchTypes } from "./search.types"
 
 const initialState: IUserState = {
   users: [],
@@ -13,6 +13,8 @@ const initialState: IUserState = {
   page: 1,
   isLoading: true,
   itemsCountRecieved: 0,
+  searchType: "",
+  searchText: "",
 }
 
 const searchUsersAction = createAction(
@@ -20,7 +22,7 @@ const searchUsersAction = createAction(
   (
     search: string,
     page: number,
-    searchType: string,
+    searchType: SearchTypes,
     onSuccess: (results: ISearchResult) => void,
     onError: () => void,
   ) => ({
@@ -32,17 +34,22 @@ const searchSlice = createSlice({
   name: "search",
   initialState,
   reducers: {
-    getUsers: (state) => {
-      return { ...state, isLoading: true }
+    getUsers: (state, action: PayloadAction<{ search: string; searchType: SearchTypes }>) => {
+      return {
+        ...state,
+        isLoading: true,
+        searchText: action.payload.search,
+        searchType: action.payload.searchType,
+      }
     },
     updateItemsRecievedCount: (state, action: PayloadAction<number>) => {
       return { ...state, itemsCountRecieved: state.itemsCountRecieved + action.payload }
     },
     updateCanLoadMore: (state, action: PayloadAction<number>) => {
-      if (action.payload >= state.itemsCountRecieved) {
+      if (action.payload > state.itemsCountRecieved) {
         return { ...state, canLoadMore: true, page: state.page + 1, isLoading: false }
       } else {
-        return { ...state, canLoadMore: false }
+        return { ...state, canLoadMore: false, isLoading: false }
       }
     },
     getUsersSuccess: (state, action: PayloadAction<IItem[]>) => {
@@ -60,7 +67,7 @@ const searchSlice = createSlice({
 const doSearchRequest = errify(function* ({
   payload: { search, page, searchType, onSuccess, onError },
 }: ExtractActionType<typeof searchUsersAction>) {
-  yield put(getUsers())
+  yield put(getUsers({ search, searchType }))
   API.setup()
   const response = (yield call(
     API.request,

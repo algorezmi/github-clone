@@ -1,8 +1,8 @@
-import React, { useCallback, useRef } from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 import { View } from "react-native"
 import { R } from "@github/res"
 import { showMessage } from "@github/utils"
-import { searchUsersAction } from "@github/state"
+import { resetUsersState, searchUsersAction } from "@github/state"
 import { IItem } from "@github/services"
 import { useAppDispatch } from "@github/hooks/hooks.types"
 import { ItemList } from "@github/views/ItemList"
@@ -16,6 +16,9 @@ const renderItemComponent = (item: { item: IItem }) => {
 
 const Organization = (props: IResultsListProps) => {
   const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(resetUsersState())
+  }, [dispatch])
   const { text } = props.route.params
   const page = useRef(1)
   const getInfo = useCallback(() => {
@@ -41,8 +44,9 @@ const Organization = (props: IResultsListProps) => {
       <ItemList
         renderItem={(item) => renderItemComponent(item)}
         callBack={getInfo}
-        preset="organizations"
+        preset={props.type}
         directionPreset="verical"
+        searchText={text}
       />
     </View>
   )

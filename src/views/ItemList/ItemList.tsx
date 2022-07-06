@@ -28,7 +28,7 @@ const ItemList = (props: IListProps) => {
         ItemSeparatorComponent={FlatListItemSeparator}
         onEndReachedThreshold={0.0}
         onEndReached={() => {
-          if ({ canLoadMore } && !isRefreshing) {
+          if (canLoadMore === true) {
             props.callBack()
           }
         }}
