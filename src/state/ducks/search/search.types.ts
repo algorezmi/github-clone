@@ -6,4 +6,5 @@ export interface IUserState {
   isLoading: boolean
   error: string
   page: number
+  itemsCountRecieved: number
 }

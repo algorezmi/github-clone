@@ -7,18 +7,18 @@ import { R } from "@github/res"
 import { ISearchContainerProps } from "./search-container.props"
 
 const SearchContainer = (props: ISearchContainerProps) => {
-  const [searchText, setText] = useState("")
   const navigation = useNavigation()
+  const [searchText, setText] = useState("")
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
         <Input
           placeholder="Type here to translate!"
-          onChange={(text) => setText(text)}
+          onChange={(t) => setText(t)}
           defaultValue={searchText}
         />
       ),
-      headerTintColor: "#fff",
+      headerTintColor: R.color.text,
     })
   }, [navigation, searchText])
   return (

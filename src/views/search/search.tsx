@@ -8,8 +8,7 @@ import { ISearchProps } from "./search.props"
 import { styles } from "./search.style"
 
 const Search = (props: ISearchProps) => {
-  const isEmptyText = props.text !== ""
-  if (isEmptyText) {
+  if (props.text !== "") {
     return (
       <View style={styles.empty_container}>
         <Item

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react"
 import { FlatList } from "react-native-gesture-handler"
 import { View } from "react-native"
-import { RefreshControl } from "@github-shared"
+import { RefreshControl, Text } from "@github-shared"
 import { useAppSelector } from "@github/hooks/hooks.types"
 import { styles } from "./item-list.styles"
 import { IListProps } from "./item-list.props"
 
-// const EmptyListMessage = () => <Text style={styles.emptyListStyle}>No Data Found</Text>
+const EmptyListMessage = () => <Text style={styles.emptyListStyle}>No Data Found</Text>
 
 const FlatListItemSeparator = () => <View style={styles.seperator} />
 
@@ -26,13 +26,14 @@ const ItemList = (props: IListProps) => {
         renderItem={(item) => props.renderItem(item)}
         contentContainerStyle={styles.cardcontainer}
         ItemSeparatorComponent={FlatListItemSeparator}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.0}
         onEndReached={() => {
           if ({ canLoadMore } && !isRefreshing) {
             props.callBack()
           }
         }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => {}} />}
+        ListEmptyComponent={EmptyListMessage}
       />
     </View>
   )
