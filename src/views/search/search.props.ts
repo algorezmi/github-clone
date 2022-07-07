@@ -4,4 +4,5 @@ import { AppRoute } from "@github/navigation/routes"
 export interface ISearchProps {
   navigation: IRootNavigationProp<AppRoute.Search>
   text: string
+  setText: (text: string) => void
 }

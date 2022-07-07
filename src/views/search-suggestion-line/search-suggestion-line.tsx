@@ -14,7 +14,7 @@ const Item = (props: ISuggestionProps) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          props.onOptionPressed(props.type)
+          props.onOptionPressed(props.text)
         }}>
         <Image style={styles.image} source={props.image} />
         <Text style={styles.text}>{buttonText}</Text>

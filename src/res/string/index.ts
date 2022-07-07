@@ -9,6 +9,7 @@ const string = Object.freeze({
     searchDescription: "ErrorSearch all of github for People and Organizations",
     searchTitle: "Find your stuff",
     errorTitle: "Error",
+    searchHistory: "Search History",
   },
   errors: {
     networkError: "Please check your internet connection and try again",

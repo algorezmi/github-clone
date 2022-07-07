@@ -1,13 +1,8 @@
 import React from "react"
-import { Screen, Text } from "@github-shared"
+import { Screen } from "@github-shared"
 
 const Home = () => {
-  return (
-    <Screen preset="scrollStack">
-      <Text>Home</Text>
-      <Text>Home</Text>
-    </Screen>
-  )
+  return <Screen preset="scrollStack" />
 }
 
 export default Home

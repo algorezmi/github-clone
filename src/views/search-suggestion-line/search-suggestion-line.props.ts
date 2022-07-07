@@ -3,7 +3,7 @@ import { searchType } from "./search-suggestion-line"
 
 export interface ISuggestionProps {
   type: searchType
-  text: String
+  text: string
   image: ImageURISource
-  onOptionPressed: Function
+  onOptionPressed: (text: string) => void
 }
