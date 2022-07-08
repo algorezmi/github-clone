@@ -21,6 +21,8 @@ const CardItem = (props: ICardItemProps) => {
       </View>
       <View style={styles.cardinfo}>
         <Text style={styles.cardtitle}>{props.name}</Text>
+        <Text style={styles.cardtitle}>{props.description}</Text>
+        <Text style={styles.cardtitle}>{props.company}</Text>
       </View>
     </TouchableOpacity>
   )

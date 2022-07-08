@@ -11,7 +11,14 @@ import { IResultsListProps } from "./results-list.props"
 import { styles } from "./results-list.style"
 
 const renderItemComponent = (item: { item: IItem }) => {
-  return <CardItem image={item.item.avatar_url} name={item.item.login} />
+  return (
+    <CardItem
+      image={item.item.avatar_url}
+      name={item.item.login}
+      description={item.item.bio}
+      company={item.item.company}
+    />
+  )
 }
 
 const Organization = (props: IResultsListProps) => {

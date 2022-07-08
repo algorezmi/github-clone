@@ -8,6 +8,6 @@ export const searchUsersEndpoint = (
   searchType: string,
 ): IEndpoint<undefined, IResponse<ISearchResult>> =>
   Object.freeze({
-    path: `search/users?q=${search}%20type:${searchType}&page=${page}&per_page=50`,
+    path: `search/users?q=${search}+type:${searchType}+in:login&page=${page}&per_page=50`,
     method: "GET",
   })
