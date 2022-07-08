@@ -6,11 +6,11 @@ import { IScreenProps } from "./screen.props"
 import { StyledFixedScreen, StyledScrollScreen, styles } from "./screen.styles"
 
 const Screen = (props: IScreenProps) => {
-  const { preset = "fixed", statusBarPreset = "dark-content", backgroundSource, ...rest } = props
+  const { preset = "fixed", statusBarPreset = "default", backgroundSource, ...rest } = props
 
   return (
     <Container>
-      <StatusBar contentPreset={statusBarPreset} preset="transparent" />
+      <StatusBar contentPreset={statusBarPreset} preset="primary" />
       {backgroundSource && <BackgroundImage source={backgroundSource} />}
       {preset === "scroll" || preset === "scrollStack" ? (
         <StyledScrollScreen

@@ -1,18 +1,14 @@
-import { ApisauceInstance, CancelToken, create, Monitor } from "apisauce"
+import { ApisauceInstance, create, Monitor } from "apisauce"
 import axiosRetry from "axios-retry"
 import { R } from "@github/res"
-import { IApiConfig, DEFAULT_API_CONFIG } from "./api.config"
-import { getGeneralApiProblem } from "./api.problem"
-import {
-  TokenType,
-  IResponse,
-  ResponseProblem,
-  IApiResponse,
-  CancelTokenSource,
-  IRequestData,
-} from "./api.types"
-import { HttpMethod, IEndpoint, IMapper } from "./endpoints"
-import { defaultDataMapper, defaultMapper, parse } from "./api.utils"
+import { ENV } from "@github/config"
+import { IApiConfig, DEFAULT_API_CONFIG } from "./api-config"
+import { getGeneralApiProblem } from "./api-problem"
+import { IResponse, ResponseProblem, IApiResponse, IPayload } from "./api-types"
+import { IEndpoint, IMapper } from "./endpoints"
+import { parse } from "./api-utils"
+
+type TokenType = string | null
 
 export class Api {
   /**
@@ -23,139 +19,196 @@ export class Api {
   /**
    * Configurable options.
    */
-  private config: IApiConfig
+  private static config: IApiConfig
 
   /**
    * Current user session token.
    */
-  private _token!: TokenType
+  private static token: TokenType = null
 
-  private allRequestsCancelSource: CancelTokenSource
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private static DEFAULT_MAPPER: IMapper<any> = (data: IPayload) => data
 
   public constructor(config: IApiConfig = DEFAULT_API_CONFIG) {
-    this.config = config
-    this.allRequestsCancelSource = CancelToken.source()
+    Api.config = config
     this.setup()
   }
 
   /**
    * Call the endpoint and returns the response data if call is made successfully or error object otherwise.
    *
-   * @param endpoint endpoint to request
-   * @param requestData body data, path parameters, response type, mapper to map response etc
+   * @example
+   * let response: IResponse<IRegisterResponse> = yield call(api.request, RegisterEndpoint, {
+   *     firstName: "Tester",
+   *     lastName: "Tester",
+   *     email: "test@gmail.com",
+   *     password: "123456",
+   *     purpose: "Travel",
+   *  })
    *
-   * @return response of type `IResponse<TResponse>`
+   *   if (response.ok) {
+   *     let data = response.data
+   *     // data of type `IRegisterResponse` contains the data exist in the payload api response.
+   *   } else {
+   *     // `response` represents error object that contains problem code, error message and temporary flag.
+   *   }
+   *
+   * @param endpoint endpoint to request
+   * @param data parameters for `GET` requests and data to upload for `POST` requests
+   * @param mapper (optional) function to map the api payload data to another object.
+   *               Useful if we want to change object keys or make any transforms on the values.
+   * @return response of type `IResponse<TResponse>` that may be actual
    */
-  public async request<TServerData, TServerResponse, TPathParams, TData, TResponse>(
-    { method, path }: IEndpoint<TServerData, TServerResponse, TPathParams, TData, TResponse>,
-    {
-      pathParams,
-      cancelToken = this.allRequestsCancelSource.token,
-      mapper = defaultMapper,
-      dataMapper = defaultDataMapper,
-      responseType = "json",
-      ...data
-    }: IRequestData<TServerData, TServerResponse, TPathParams, TData, TResponse>,
-  ): Promise<IResponse<TResponse>> {
+  public request = async <TData, TResponse>(
+    endpoint: IEndpoint<TData, TResponse>,
+    data: TData,
+    mapper = endpoint.mapper,
+  ): Promise<IResponse<TResponse>> => {
+    const { path, pathParams } = endpoint
     const fullPath = pathParams ? parse(path, ...pathParams) : path
-    const serverData = data && dataMapper(data as TData)
-
-    const operation = this.getMethodOperation(method)
-    const response: IApiResponse<TServerResponse> = await operation(fullPath, serverData, {
-      cancelToken,
-      responseType: responseType,
-    })
-
-    return this.handleApiResponse(response, mapper)
-  }
-
-  private getMethodOperation(method: HttpMethod) {
-    switch (method) {
-      case HttpMethod.Get:
-        return this.apisauce.get
-      case HttpMethod.Post:
-        return this.apisauce.post
-      case HttpMethod.Put:
-        return this.apisauce.put
-      case HttpMethod.Delete:
-        return this.apisauce.delete
+    switch (endpoint.method) {
+      case "GET":
+        return await this.get<TData, TResponse>(fullPath, data, mapper)
+      case "POST":
+        return await this.post<TData, TResponse>(fullPath, data, mapper)
+      case "PUT":
+        return await this.put<TData, TResponse>(fullPath, data, mapper)
+      case "DELETE":
+        return await this.delete<TData, TResponse>(fullPath, data, mapper)
     }
   }
 
-  public get token() {
-    return this._token
+  private get = async <TParams, TResponse>(
+    endpoint: string,
+    params?: TParams,
+    mapper?: IMapper<TResponse>,
+  ): Promise<IResponse<TResponse>> => {
+    const reqMapper = mapper ? mapper : Api.DEFAULT_MAPPER
+    const response: IApiResponse = await this.apisauce.get(endpoint, params, {
+      headers: { ...this.tokenHeader },
+    })
+    return this.handleApiResponse(response, reqMapper)
   }
 
-  public setToken(token: TokenType) {
-    this._token = token
+  private post = async <TData, TResponse>(
+    endpoint: string,
+    bodyData: TData,
+    mapper?: IMapper<TResponse>,
+  ): Promise<IResponse<TResponse>> => {
+    const reqMapper = mapper ? mapper : Api.DEFAULT_MAPPER
+    const response: IApiResponse = await this.apisauce.post(endpoint, bodyData, {
+      headers: { ...this.tokenHeader },
+    })
+    return this.handleApiResponse(response, reqMapper)
   }
 
-  public reset() {
-    this._token = null
-    this.allRequestsCancelSource.cancel()
-    this.allRequestsCancelSource = CancelToken.source()
+  private put = async <TData, TResponse>(
+    endpoint: string,
+    bodyData: TData,
+    mapper?: IMapper<TResponse>,
+  ): Promise<IResponse<TResponse>> => {
+    const reqMapper = mapper ? mapper : Api.DEFAULT_MAPPER
+    const response: IApiResponse = await this.apisauce.put(endpoint, bodyData, {
+      headers: { ...this.tokenHeader },
+    })
+    return this.handleApiResponse(response, reqMapper)
   }
 
+  private delete = async <TData, TResponse>(
+    endpoint: string,
+    bodyData: TData,
+    mapper?: IMapper<TResponse>,
+  ): Promise<IResponse<TResponse>> => {
+    const reqMapper = mapper ? mapper : Api.DEFAULT_MAPPER
+    const response: IApiResponse = await this.apisauce.delete(endpoint, bodyData, {
+      headers: { ...this.tokenHeader },
+    })
+    return this.handleApiResponse(response, reqMapper)
+  }
   public addMonitor(monitor: Monitor) {
     this.apisauce?.addMonitor(monitor)
   }
 
-  public newCancelSource() {
-    return CancelToken.source()
+  public getURL(endpoint: string): string {
+    return Api.config.url + "/" + endpoint
   }
 
-  private setup() {
-    this._token = null
+  public setURL(baseURL: string): void {
+    Api.config.url = baseURL
+  }
+
+  public getToken(): TokenType {
+    return Api.token
+  }
+
+  public setToken(token: TokenType): void {
+    Api.token = token
+  }
+
+  public removeToken(): void {
+    Api.token = null
+  }
+
+  public setup(baseURL: string = ENV.baseURL): void {
+    Api.config.url = baseURL
     this.apisauce = create({
-      baseURL: this.config.url,
+      baseURL: baseURL,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "X-API-VERSION": 1,
       },
     })
 
     // Exponential Back-off Retry Mechanism
     // https://developers.google.com/analytics/devguides/reporting/core/v3/errors#backoff
     axiosRetry(this.apisauce.axiosInstance, {
-      retries: 4,
+      retries: 2,
       retryDelay: (retryNumber) => {
-        const delay = Math.pow(2, retryNumber) * this.config.minimumTimeout
-        const randomSum = delay * 0.2 * Math.random()
-        return delay + randomSum
+        const delay = retryNumber * Api.config.minimumTimeout
+        return delay
       },
     })
   }
 
-  private handleApiResponse<TServerResponse, TResponse>(
-    response: IApiResponse<TServerResponse>,
-    mapper: IMapper<TServerResponse, TResponse>,
+  private get tokenHeader() {
+    return Api.token ? { Authorization: `Bearer ${Api.token}` } : {}
+  }
+
+  private handleApiResponse<TResponse>(
+    response: IApiResponse,
+    mapper: IMapper<TResponse>,
   ): IResponse<TResponse> {
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)
-
       return {
         ok: false,
         ...problem,
-        code: response.status,
-        serverMessage: response.data?.message,
+        errors: response.data?.errors,
+        //TO-DO put a default value to serverMessage instead of ""
+        serverMessage:
+          response.data?.message ||
+          (typeof response.data?.messages === "string"
+            ? response.data.messages
+            : response.data?.messages && Object.keys(response.data?.messages).length > 0
+            ? response.data?.messages[Object.keys(response.data.messages)[0]][0]
+            : ""),
+        statusCode: response.status,
         error: response.originalError.message,
+        errorHeading: response.status === 403 ? response.data?.heading : undefined,
+        errorMessage: response.status === 403 ? response.data?.message : undefined,
       }
     }
-
-    const body = response.data
-
-    try {
-      const data = body ? mapper(body) : ({} as unknown as TResponse)
-      return { ok: true, data }
-    } catch (error) {
-      return {
-        ok: false,
-        problem: ResponseProblem.BadData,
-        temporary: true,
-        message: R.string.errors.badDataError,
-        error: error?.message ?? String(error),
-      }
-    }
+    const data = mapper(response.data)
+    const statusCode = response.status
+    return data
+      ? { ok: true, data, statusCode }
+      : {
+          ok: false,
+          problem: ResponseProblem.badData,
+          message: R.string.errors.badDataError,
+          temporary: true,
+        }
   }
 }
 
