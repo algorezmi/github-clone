@@ -9,7 +9,8 @@ const primary = css`
 
 const primaryLarger = css`
   ${primary};
-  font-size: ${R.fontSize.larger}px;
+  font-size: ${R.fontSize.bigger}px;
+  color: ${R.color.text};
 `
 
 const secondary = css`

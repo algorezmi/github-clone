@@ -1,6 +1,10 @@
 const string = Object.freeze({
   shared: {
     errorTitle: "Error",
+    organizatios: "Organizations",
+    organization_type: "org",
+    users: "Users",
+    users_type: "users",
   },
   errors: {
     networkError: "Please check your internet connection and try again",

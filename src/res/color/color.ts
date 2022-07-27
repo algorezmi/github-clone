@@ -12,7 +12,7 @@ export default class AppColor {
 
   public background = palette.black.base
 
-  public text = palette.white.base
+  public text = palette.black.base
 
   public textInputPlaceholder = palette.grey.light
   public textInputSelection = palette.blue.base

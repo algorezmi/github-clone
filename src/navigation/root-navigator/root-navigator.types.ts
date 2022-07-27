@@ -3,7 +3,8 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { AppRoute } from "@github/navigation/routes"
 
 export type IRootParamList = {
-  [AppRoute.Test]: undefined
+  [AppRoute.Tabs]: undefined
+  [AppRoute.Search]: undefined
 }
 
 type IRootRoute = keyof IRootParamList
